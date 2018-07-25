@@ -6,7 +6,7 @@ _Collection of examples combining Apache Spark and LSST codes._
 
 Although [Apache Spark](http://spark.apache.org/) is not primarily meant to bring further speed-up on the computation itself, it is very efficient to deal with and manage a large volume of data. It often provides better performances than other tools for e.g. embarrassingly parallel job by optimizing data distribution (load balancing) and minimizing I/O latency.
 
-One should also mention that one of the strength of Apache Spark resides in its simplicity. It’s impressive really how seamless Spark works for dealing with pipeline and job management. Those are done internally without user actions and are often more efficiently than what we could do manually by scheduling tasks with MPI for example.
+Let's also mention that one of the strength of Apache Spark resides in its simplicity. It’s impressive how seamless Spark works for dealing with pipeline and job management. Those are managed internally without user actions and are often executed more efficiently than what we could do manually by scheduling tasks with MPI for example.
 
 ## What typically needs to be modified to use Apache Spark?
 
@@ -20,7 +20,7 @@ One should keep in mind that Spark is a distributed framework, so concepts such 
 
 ### Level 1: code infection
 
-We go beyond just wrapping the code and use the full potential of Spark: functional programming, native data source connectors (e.g. [spark-fits](https://github.com/astrolabsoftware/spark-fits)), ...
+We go beyond just wrapping the existing package and use the full potential of Spark: functional programming, native data source connectors (e.g. [spark-fits](https://github.com/astrolabsoftware/spark-fits)), ...
 
 ## Available LSST package using Spark
 
