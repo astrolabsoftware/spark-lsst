@@ -20,7 +20,7 @@ One should keep in mind that Spark is a distributed framework, so concepts such 
 
 ### Level 1: code infection
 
-We could go beyond just wrapping up the code and use the full potential of Spark: functional programming, native data source connectors (e.g. [spark-fits](https://github.com/astrolabsoftware/spark-fits)), ...
+We go beyond just wrapping the code and use the full potential of Spark: functional programming, native data source connectors (e.g. [spark-fits](https://github.com/astrolabsoftware/spark-fits)), ...
 
 ## Available LSST package using Spark
 
