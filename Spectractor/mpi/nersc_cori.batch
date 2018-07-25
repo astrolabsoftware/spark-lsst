@@ -1,0 +1,21 @@
+#!/bin/bash -l
+#SBATCH -p debug
+#SBATCH -N 40
+#SBATCH -t 00:30:00
+#SBATCH -J specMPI
+#SBATCH -C haswell
+
+source $HOME/.bashrc.ext
+cd $SLURM_SUBMIT_DIR
+
+## Update the path!
+path_to_scripts=$PWD
+
+outpath="/global/cscratch1/sd/peloton/output_ctio_MPI"
+logfile="/global/homes/p/peloton/Spectractor/ctiofulllogbook_jun2017_v5.csv"
+#datapath="/global/cscratch1/sd/peloton/ctio/CTIODataJune2017_reduced_RG715_v2/*/*.fits"
+# For NERSC only (direct glob)
+datapath="/global/cscratch1/sd/peloton/ctio/CTIODataJune2017_reduced_RG715_v2"
+
+time srun -n 1280 python-mpi ${path_to_scripts}/runExtractorMPI.py \
+  -i $datapath -o $outpath -c $logfile
