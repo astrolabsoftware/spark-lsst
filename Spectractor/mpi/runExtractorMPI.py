@@ -14,7 +14,11 @@
 from spectractor import parameters
 from spectractor.extractor.extractor import Spectractor
 from spectractor.logbook import LogBook
+
+from astroquery.exceptions import RemoteServiceError
+
 from mpi4py import MPI
+
 import os
 import glob
 
