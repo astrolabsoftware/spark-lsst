@@ -72,4 +72,4 @@ In this benchmark, we compare the runtime of Spectractor if we use Apache Spark 
 
 For Spark, among the 14 min (user time), 8 min were dedicated to raw I/O and computation and the rest was spent in latency or queries to external DB.
 
-For the MPI version of Spectractor, see [here](https://github.com/astrolabsoftware/spark-lsst/blob/master/Spectractor/mpi/runExtractorMPI.py).
+For the MPI version of Spectractor, see [here](https://github.com/astrolabsoftware/spark-lsst/tree/master/Spectractor/mpi).
