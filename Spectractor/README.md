@@ -115,4 +115,4 @@ For Spark, among the 14 min (user time), 8 min were dedicated to raw I/O and com
 
 For the MPI version of Spectractor, see [here](https://github.com/astrolabsoftware/spark-lsst/tree/master/Spectractor/mpi).
 
-_* Reported times varied by +/- 10% depending on the machine status._
+_* Several runs performed on July 24th, 2018. Reported times varied by +/- 10% depending on the machine status._
