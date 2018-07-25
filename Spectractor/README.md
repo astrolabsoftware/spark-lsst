@@ -17,7 +17,7 @@
 
 ## The original package <a name="The-original-package"></a>
 
-[Spectractor](https://github.com/LSSTDESC/Spectractor) is primarily developed by Jérémy Neveu.
+[Spectractor](https://github.com/LSSTDESC/Spectractor) is primarily developed by [Jérémy Neveu](https://github.com/jeremyneveu).
 
 The goal of Spectractor is to extract spectra from CTIO images in order to test the performance of dispersers dedicated to the LSST Auxiliary Telescope, and characterize the atmospheric transmission.
 
