@@ -43,8 +43,6 @@ if __name__ == "__main__":
 
     logbook = LogBook(logbook=args.csv)
 
-    # opts = [[fn, logbook.search_for_image(fn.split('/')[-1])] for fn in file_names]
-
     rank = MPI.COMM_WORLD.rank
     size = MPI.COMM_WORLD.size
 
@@ -55,8 +53,6 @@ if __name__ == "__main__":
     for position in range(rank, len(file_names), size):
         file_name = file_names[position]
         opt = logbook.search_for_image(file_name.split('/')[-1])
-        #opt = opts[position]
-        #file_name = opt[0]
         target = opt[0]
         xpos = opt[1]
         ypos = opt[2]
@@ -64,5 +60,12 @@ if __name__ == "__main__":
             continue
         try:
             Spectractor(file_name, args.output_directory, [xpos, ypos], target)
-        except:
-            print("Failed")
+        except ValueError:
+            file_name = file_name + "_ValueError_BAD"
+            print("[{}] {} failed".format(rank, file_name))
+        except RemoteServiceError:
+            file_name = file_name + "_RemoteServiceError_BAD"
+            print("[{}] {} failed".format(rank, file_name))
+        except IndexError:
+            file_name = file_name + "_IndexError_BAD"
+            print("[{}] {} failed".format(rank, file_name))
