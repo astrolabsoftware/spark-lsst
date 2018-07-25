@@ -23,7 +23,7 @@ The goal of Spectractor is to extract spectra from CTIO images in order to test 
 
 In this example, we focus on spectra extraction from CTIO images. The way Spectractor works suits very well to Apache Spark: each of the 3300 images to process is independent from the others, and the volume of data collected is rather big (106 GB) and will be bigger and bigger over the time.
 
-In the end, out of ∼ 9000 lines of python codes in the original Spectractor code, ∼20 lines were modified or added!
+Note that we only performed a [Level 0](https://github.com/astrolabsoftware/spark-lsst) set of modifications. In the end, out of ∼ 9000 lines of python codes in the original Spectractor code, ∼20 lines were modified or added!
 
 ## How to use it? <a name="How-to-use-it?"></a>
 
