@@ -12,10 +12,12 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 from pyspark.sql import SparkSession
+from pyspark import SparkContext
 from astroquery.exceptions import RemoteServiceError
 
 import os
 import glob
+from typing import List
 try:
     os.mkdir("astropy")
 except FileExistsError:
@@ -69,7 +71,8 @@ def addargs(parser):
         action='store_true',
         help='Level of log for Spectractor. Default is False.')
 
-def hglob(sc, datapath="hdfs://134.158.75.222:8020/user/julien.peloton"):
+def hglob(sc: SparkContext,
+          datapath: str="hdfs://134.158.75.222:8020/user/julien.peloton") -> List[str]:
     """
     Perform a glob (= list files) on a HDFS folder.
 
@@ -98,7 +101,7 @@ def hglob(sc, datapath="hdfs://134.158.75.222:8020/user/julien.peloton"):
         fns.append(str(filestatus.getPath()))
     return fns
 
-def search_for_image(logbook, tag):
+def search_for_image(logbook: LogBook, tag: str) -> (str, int, int):
     """
     Search for image according to a `tag`, and return
     info (target name, xposition, yposition).
@@ -122,7 +125,8 @@ def search_for_image(logbook, tag):
         return target, xpos, ypos
 
 
-def run_spectractor(file_name, output_directory, position, target, data):
+def run_spectractor(file_name: str, output_directory: str,
+                    position: (int, int), target: str, data: bytes) -> str:
     """
     Run the main Spectrator methods. This includes: load of the data,
     power-spectrum computation, and the fit. The spectrum is dumped on
@@ -156,7 +160,7 @@ def run_spectractor(file_name, output_directory, position, target, data):
         file_name = file_name + "_IndexError_BAD"
     return file_name
 
-def quiet_logs(sc, log_level="ERROR"):
+def quiet_logs(sc: SparkContext, log_level: str = "ERROR") -> None:
     """
     Set the level of log in Spark.
 
