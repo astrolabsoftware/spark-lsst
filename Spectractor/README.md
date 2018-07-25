@@ -6,11 +6,8 @@
 
 1. [Sparktractor: Spectractor with Apache Spark](#Sparktractor--Spectractor-with-Apache-Spark)
    1. [The original package](#The-original-package)
-   1. [Why would you use Apache Spark here?](#Why-would-you-use-Apache-Spark-here?)
-   1. [What needs to be modified to use Apache Spark?](#What-needs-to-be-modified-to-use-Apache-Spark?)
-      1. [Level 0: minimal intrusion](#Level-0--minimal-intrusion)
-      1. [Level 1: code infection](#Level-1--code-infection)
    1. [How to use it?](#How-to-use-it?)
+      1. [Code source](#Code-source)
       1. [Apache Spark cluster (with HDFS)](#Apache-Spark-cluster--with-HDFS-)
       1. [Cori@NERSC](#Cori@NERSC)
    1. [Benchmarks](#Benchmarks)
@@ -24,34 +21,34 @@
 
 The goal of Spectractor is to extract spectra from CTIO images in order to test the performance of dispersers dedicated to the LSST Auxiliary Telescope, and characterize the atmospheric transmission.
 
-## Why would you use Apache Spark here? <a name="Why-would-you-use-Apache-Spark-here?"></a>
-
-Although [Apache Spark](http://spark.apache.org/) is not primarily meant to bring further speed-up on the computation, it is very efficient to deal with and manage a large volume of data. It often provides better performances than other tools for this kind of embarrassingly parallel job by optimizing data distribution (load balancing) and minimizing I/O latency.
-One should also mention that one of the strength of Spark is its simplicity to deal with pipeline and job management. Those are done automatically and often more efficiently than what we could do manually by scheduling tasks with MPI for example.
-
 In this example, we focus on spectra extraction from CTIO images. The way Spectractor works suits very well to Apache Spark: each of the 3300 images to process is independent from the others, and the volume of data collected is rather big (106 GB) and will be bigger and bigger over the time.
-
-## What needs to be modified to use Apache Spark? <a name="What-needs-to-be-modified-to-use-Apache-Spark?"></a>
-
-We acknowledge the fact that cluster computing in general and Apache Spark in particular can be derouting at first sight for newcomers, and one often does not want to rewrite entirely a package.
-We define 2 levels of _sparkfication_, with the first one being a minimal change of the original code for Spark to work, and the second one being a more aggressive restructuration to fully benefit from the Spark framework.
-
-### Level 0: minimal intrusion <a name="Level-0--minimal-intrusion"></a>
-
-At the level 0, we mostly focus on rewriting I/O to be compliant with Spark philosophy: input, output, and call to external data such as external DB queries or internal log/parameter files.
-One should keep in mind that Spark is a distributed framework, so concepts such as absolute paths, or local data are not valid here.
 
 In the end, out of ∼ 9000 lines of python codes in the original Spectractor code, ∼20 lines were modified or added!
 
-### Level 1: code infection <a name="Level-1--code-infection"></a>
-
-We could go beyond just wrapping up the code and use the full potential of Spark: functional programming, native data source connectors ([spark-fits](https://github.com/astrolabsoftware/spark-fits)), ... This has not been yet done here.
-
 ## How to use it? <a name="How-to-use-it?"></a>
 
-#### Cloning the repo
+#### Code source
 
 First fork and clone the [JulienPeloton/Spectractor](https://github.com/JulienPeloton/Spectractor) repository, and pull the branch `spark`. For the moment this branch lives in my fork, but later it will be merged in the original repository (I keep it sync with the original).
+
+Each machine needs to know the code to execute. That means the Spectractor package (which usually lives in your driver) needs to be either installed on all machines (not scalable) or shipped at execution. I advice the latter if the size of the repo is not too big (a priori you do not have GB of python files...!). This is achieved by zipping the code (files or set of files within folders) thanks to the argument `--py-file <.zip of the repo>`:
+
+```bash
+spark-submit \
+--master $SPARKURL \
+--driver-memory 15g --executor-memory 50g --executor-cores 32 --total-executor-cores 1280 \
+--py-files /path/to/spectractor.zip \
+/path/to/sparktractor.py <args>
+```
+
+For reference, we provide such a zip of the code (with modification for the Spark cluster@LAL and Cori@NERSC) produced using:
+
+```bash
+# Move to Spectractor root 
+cd /path/to/Spectractor
+# Zip the folder containing sources
+zip -r spectractor.zip spectractor
+```
 
 #### Apache Spark main
 
@@ -60,11 +57,11 @@ We provide a python script to launch Spectractor with Spark: [sparktractor.py](h
 ```python
 # Distribute the computation over dataNodes containing images
 spectra = spark.sparkContext.binaryFiles(<data path>)\
-	# Extract additional informations from user file
+	# Extract additional informations from user file 
 	.map(lambda x: <data + load external information>)\
-	# Filter out images considered as bad
+	# Filter out images considered as bad 
 	.filter(lambda x: <condition>)\
-	# Run Spectractor on remaining images
+	# Run Spectractor on remaining images 
 	.map(lambda x: <run Spectractor>)\
 	# collect back each core output (spectra here).
 	.collect()
@@ -73,12 +70,12 @@ spectra = spark.sparkContext.binaryFiles(<data path>)\
 There are few caveats:
 
 - Spark is a framework to perform distributed computing. Therefore you are expected to work with distant machines so absolute paths are not valid here. Especially variable like `os.getenv("HOME")` does not mean much in this context (each machine will have its own `$HOME`). They have to be replaced in the code with meaningful path (if possible).
-- If your code needs to read local data, it has be known by all the machines. There are several ways of doing that: 
+- If your code needs to read local data, it has be known by all the machines. There are several ways of doing that:
  1. Duplicate and store the data onto all executors prior to the job.
  2. Broadcast the data from the driver to the executors at the beginning of the job.
  3. Store the data on a distant server, and each executor will query or download the data on-the-fly during the run.
 
-Obviously, solution 1. is by far the one easiest but the one which won't scale for thousand machines... Solution 2. is great if the volume of data is not big (you do not want to broadcast GB of data though...). Solution 3. is Spark-proof but requires an internet connection, a distant storage place, and modification in the code to the download the data. 
+Obviously, solution 1. is by far the one easiest but the one which won't scale for thousand machines... Solution 2. is great if the volume of data is not big (you do not want to broadcast GB of data though...). Solution 3. is Spark-proof but requires an internet connection, a distant storage place, and modification in the code to the download the data.
 
 #### Data from external DB
 
@@ -87,29 +84,6 @@ Spectractor needs external DB such as NED or Simbad (online -- no problem), but 
 #### User parameter file
 
 Spectractor also needs a parameter file containing flags and extra information on the observation condition. We opted for the solution 2. (broadcast) since the log file is very small (KB).
-
-#### Shipping the code to executors
-
-Last but not least, each machine needs to know the code to execute. That means the Spectractor package (which usually lives in your driver) needs to be either installed on all machines (not scalable) or shipped at execution. I advice the latter if the size of the repo is not too big (a priori you do not have GB of python files...!). This is achieved by zipping the code (files or set of files within folders) thanks to the argument `--py-file <.zip of the repo>`:
-
-```bash
-spark-submit \
-  --master $SPARKURL \
-  --driver-memory 15g --executor-memory 50g --executor-cores 32 --total-executor-cores 1280 \
-  --py-files /path/to/spectractor.zip \
-  /path/to/sparktractor.py <args>
-```
-
-For reference, we provide such a zip of the code (with modification for the Spark cluster@LAL and Cori@NERSC) produced using:
-
-```bash
-# Move to Spectractor root
-cd /path/to/Spectractor
-# Zip the folder containing sources
-zip -r spectractor.zip spectractor
-```
-
-See below for complete launchers.
 
 ### Apache Spark cluster (with HDFS) <a name="Apache-Spark-cluster--with-HDFS-"></a>
 
