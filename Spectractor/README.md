@@ -99,7 +99,7 @@ What is good with HPC machines here, is that they are not really distributed hen
 
 ### Apache Spark vs MPI @ NERSC <a name="Apache-Spark-vs-MPI-@-NERSC"></a>
 
-In this benchmark, we compare the runtime of Spectractor if we use Apache Spark or MPI to schedule the different tasks.
+In this benchmark, we compare the runtime* of Spectractor if we use Apache Spark or MPI to schedule the different tasks.
 
 - Data set: Full CTIO (3363 images, 106 GB on disk)
 - Machine: Cori @ NERSC
@@ -114,3 +114,5 @@ In this benchmark, we compare the runtime of Spectractor if we use Apache Spark 
 For Spark, among the 14 min (user time), 8 min were dedicated to raw I/O and computation and the rest was spent in latency or queries to external DB.
 
 For the MPI version of Spectractor, see [here](https://github.com/astrolabsoftware/spark-lsst/tree/master/Spectractor/mpi).
+
+_* Reported times varied by +/- 10% depending on the machine status._
