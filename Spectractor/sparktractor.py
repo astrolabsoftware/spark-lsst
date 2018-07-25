@@ -109,6 +109,8 @@ def search_for_image(logbook: LogBook, tag: str) -> (str, int, int):
 
     Parameters
     ----------
+    logbook : LogBook
+        Instance of spectractor.logbook.LogBook
     tag : String
         The tag of the image (filename) as written in the logbook.
 
@@ -142,6 +144,10 @@ def run_spectractor(file_name: str, output_directory: str,
         Position of the target (xpos, ypos) as given by the logbook search.
     target : String
         Name of the target
+    data : bytes
+        Output of sc.binaryFiles reading a FITS file, that is
+        the FITS file in binary to be given to the
+        hdu.HDUList.fromstring method.
 
     Returns
     ----------
