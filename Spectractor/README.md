@@ -100,6 +100,15 @@ spark-submit \
   /path/to/sparktractor.py <args>
 ```
 
+For reference, we provide such a zip of the code (with modification for the Spark cluster@LAL and Cori@NERSC) produced using:
+
+```bash
+# Move to Spectractor root
+cd /path/to/Spectractor
+# Zip the folder containing sources
+zip -r spectractor.zip spectractor
+```
+
 See below for complete launchers.
 
 ### Apache Spark cluster (with HDFS) <a name="Apache-Spark-cluster--with-HDFS-"></a>
